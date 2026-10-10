@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>TikTok login · abaad</title>
+<style>
+:root{color-scheme:light dark}
+body{font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif;max-width:720px;margin:0 auto;padding:32px 20px 64px;color:#12182B;background:#fff}
+@media (prefers-color-scheme:dark){body{color:#E9ECF7;background:#0E1221}a{color:#8A9BFF}code,textarea{background:#232A4D!important;color:#E9ECF7!important}}
+h1{font-size:28px;line-height:1.2;margin:0 0 8px}p{margin:0 0 14px}
+code,textarea{background:#E6E9FD;border-radius:6px}code{padding:1px 6px}
+textarea{width:100%;min-height:96px;padding:10px;border:0;font:14px/1.4 ui-monospace,Menlo,monospace;resize:vertical}
+button{font:inherit;padding:8px 14px;border-radius:8px;border:1px solid #2B44E8;background:#2B44E8;color:#fff;cursor:pointer}
+.muted{color:#5B6478}
+</style>
+</head><body>
+<h1>TikTok login</h1>
+<div id="ok" hidden>
+  <p>Authorization succeeded. Copy this code and send it back to finish setup. It works once and expires within minutes.</p>
+  <textarea id="code" readonly></textarea>
+  <p><button id="copy" type="button">Copy code</button> <span id="done" class="muted"></span></p>
+  <p class="muted">This page runs entirely in your browser. Nothing is sent anywhere.</p>
+</div>
+<div id="bad" hidden>
+  <p>TikTok returned an error: <code id="err"></code></p>
+  <p class="muted">Close this page and start the login again.</p>
+</div>
+<div id="none" hidden>
+  <p>This is the sign-in return page for abaad. There is nothing to do here unless you arrived from TikTok's authorization screen.</p>
+</div>
+<script>
+var q = new URLSearchParams(location.search);
+var code = q.get("code"), error = q.get("error_description") || q.get("error");
+function show(id){ document.getElementById(id).hidden = false; }
+if (code) {
+  document.getElementById("code").value = code;
+  show("ok");
+  document.getElementById("copy").onclick = function(){
+    var t = document.getElementById("code"); t.select();
+    (navigator.clipboard ? navigator.clipboard.writeText(t.value) : Promise.resolve(document.execCommand("copy")))
+      .then(function(){ document.getElementById("done").textContent = "Copied."; });
+  };
+  history.replaceState(null, "", location.pathname);
+} else if (error) {
+  document.getElementById("err").textContent = error; show("bad");
+} else { show("none"); }
+</script>
+</body></html>
